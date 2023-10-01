@@ -1,0 +1,41 @@
+{
+    "name": "emotality/laravel-telegram-logger",
+    "description": "Laravel package to report exceptions to a Telegram chat, group or channel.",
+    "type": "library",
+    "keywords": [
+        "laravel",
+        "telegram",
+        "telegram api",
+        "logger",
+        "logging",
+        "log"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/emotality/laravel-telegram-logger",
+    "authors": [
+        {
+            "name": "Jean-Pierre Fourie",
+            "homepage": "https://emotality.com",
+            "email": "jp@emotality.com"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-json": "*",
+        "illuminate/support": "^9.0|^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Emotality\\Telegram\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Emotality\\Telegram\\TelegramLoggerServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

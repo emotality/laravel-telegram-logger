@@ -1,0 +1,39 @@
+<?php
+
+namespace Emotality\Telegram;
+
+use Illuminate\Support\ServiceProvider;
+
+class TelegramLoggerServiceProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        if (! $this->app->runningInConsole()) {
+            $this->app->singleton(TelegramAPI::class, fn () => new TelegramAPI());
+            $this->app['log']->extend('telegram', function ($app, array $config) {
+                return new \Monolog\Logger('telegram-logger', [
+                    new TelegramLogHandler($config['delay_send'], $config['level']),
+                ]);
+            });
+        }
+    }
+
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                __DIR__.'/../config/telegram-logger.php' => config_path('telegram-logger.php'),
+            ], 'config');
+        }
+    }
+}
