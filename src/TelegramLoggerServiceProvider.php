@@ -13,14 +13,12 @@ class TelegramLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (! $this->app->runningInConsole()) {
-            $this->app->singleton(TelegramAPI::class, fn () => new TelegramAPI());
-            $this->app['log']->extend('telegram', function ($app, array $config) {
-                return new \Monolog\Logger('telegram-logger', [
-                    new TelegramLogHandler($config['delay_send'], $config['level']),
-                ]);
-            });
-        }
+        $this->app->singleton(TelegramAPI::class, fn () => new TelegramAPI());
+        $this->app['log']->extend('telegram', function ($app, array $config) {
+            return new \Monolog\Logger('telegram-logger', [
+                new TelegramLogHandler($app['config']['app'], $config['cache_ttl'], $config['level']),
+            ]);
+        });
     }
 
     /**

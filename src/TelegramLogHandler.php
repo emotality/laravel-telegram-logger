@@ -2,21 +2,31 @@
 
 namespace Emotality\Telegram;
 
+use Illuminate\Support\Facades\Cache;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
 
 class TelegramLogHandler extends AbstractProcessingHandler
 {
+    /** @var string */
+    private string $app_name;
+
+    /** @var string */
+    private string $app_env;
+
     /** @var int|false */
     private int|false $cache_ttl;
 
     /**
+     * @param  array  $app_config
      * @param  int|false  $cache_ttl
      * @param  int|string|\Monolog\Level  $level
      */
-    public function __construct(int|false $cache_ttl, int|string|Level $level = Level::Debug)
+    public function __construct(array $app_config, int|false $cache_ttl, int|string|Level $level = Level::Debug)
     {
+        $this->app_name = $app_config['name'];
+        $this->app_env = ucfirst($app_config['env']);
         $this->cache_ttl = $cache_ttl;
 
         parent::__construct($level);
@@ -37,11 +47,11 @@ class TelegramLogHandler extends AbstractProcessingHandler
 
             $cache_key = 'telegram_logger:'.md5($info);
 
-            if (\Cache::has($cache_key)) {
+            if (Cache::has($cache_key)) {
                 return false;
             }
 
-            \Cache::put($cache_key, get_class($e), $this->cache_ttl);
+            Cache::put($cache_key, get_class($e), $this->cache_ttl);
         }
 
         return true;
@@ -66,8 +76,8 @@ class TelegramLogHandler extends AbstractProcessingHandler
      */
     protected function formatMessage(LogRecord $record): string
     {
-        $formatted = '<b>Application:</b> '.config('app.name').PHP_EOL;
-        $formatted .= '<b>Environment:</b> '.ucfirst(config('app.env')).PHP_EOL;
+        $formatted = '<b>Application:</b> '.$this->app_name.PHP_EOL;
+        $formatted .= '<b>Environment:</b> '.$this->app_env.PHP_EOL;
         $formatted .= '<b>Log Level:</b> '.$record->level->name.PHP_EOL;
         $formatted .= '<b>Date:</b> '.$record->datetime->format('Y-m-d H:i:s').PHP_EOL;
 

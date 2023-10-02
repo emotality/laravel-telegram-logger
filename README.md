@@ -16,8 +16,8 @@ Laravel package to report exceptions to a Telegram chat, group or channel.
 
 ## Requirements
 
-- PHP 8.0+
-- Laravel 9.0+
+- PHP 8.1+
+- Laravel 10
 
 ## Installation
 
@@ -38,11 +38,11 @@ TELEGRAM_CHAT_ID="<telegram_chat_id>"
     'telegram' => [
         'driver' => 'telegram',
         'level' => 'error',
-        'delay_send' => env('TELEGRAM_DELAY', 300),
+        'cache_ttl' => env('TELEGRAM_CACHE_TTL', 300),
     ],
 ],
 ```
-###### _Note: `delay_send` is only used for recurring exceptions. Recurring exceptions will only be logged once every 300 seconds to avoid flooding the API and chat._
+###### _Note: Read more about the `cache_ttl` key below._
 
 5. Update your log stack and add `telegram` to the `channels` array in `config/logging.php`:
 
@@ -50,7 +50,7 @@ TELEGRAM_CHAT_ID="<telegram_chat_id>"
 'stack' => [
     'driver' => 'stack',
     'channels' => ['daily', 'telegram'],
-    'ignore_exceptions' => false,
+    ...,
 ],
 ```
 
@@ -59,6 +59,15 @@ or change your `LOG_CHANNEL` in your `.env`:
 ```dotenv
 LOG_CHANNEL=telegram
 ```
+
+### Caching TTL explained:
+
+A MD5 checksum is being created for every exception, then that checksum is being cached for the `cache_ttl` seconds you provide. If checksum exists in the cache, the log will not be sent.
+
+In other words, when the exact same exception reoccurs, only the first exception will be logged, if after 300 seconds it still occurs, it will be logged again.<br>
+Only the first occurrence of the same exception will be logged every 300 seconds to avoid flooding the Telegram API and your chat.
+
+The `cache_ttl` key accepts `false` to disable caching, meaning, each and every exception will be logged to Telegram, even if it's 1000 of the same exception.
 
 ## License
 
