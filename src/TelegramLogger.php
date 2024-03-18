@@ -2,6 +2,8 @@
 
 namespace Emotality\Telegram;
 
+use Illuminate\Support\Facades\App;
+
 class TelegramLogger
 {
     /**
@@ -11,7 +13,7 @@ class TelegramLogger
      */
     private static function api()
     {
-        return app(TelegramAPI::class);
+        return App::get(TelegramAPI::class);
     }
 
     /**

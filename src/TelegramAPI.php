@@ -3,6 +3,9 @@
 namespace Emotality\Telegram;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class TelegramAPI
 {
@@ -30,11 +33,11 @@ class TelegramAPI
      */
     public function __construct()
     {
-        $this->config = config('telegram-logger') ?? $this->config;
+        $this->config = Config::get('telegram-logger') ?? $this->config;
 
         $this->base_url = $this->config['api_url'].$this->config['api_key'];
 
-        $this->client = \Http::baseUrl($this->base_url)->withOptions([
+        $this->client = Http::baseUrl($this->base_url)->withOptions([
             'debug'           => $this->config['api_debug'],
             //'verify'          => true,
             //'version'         => 2.0,
@@ -59,7 +62,7 @@ class TelegramAPI
         ];
 
         if ($this->config['api_debug'] ?? false) {
-            \Log::channel('single')->debug(
+            Log::channel('single')->debug(
                 sprintf("TELEGRAM-LOGGER API REQUEST:\n%s/sendMessage\n%s", $this->base_url, json_encode($data, 128))
             );
         }
@@ -67,7 +70,7 @@ class TelegramAPI
         $response = $this->client->post('/sendMessage', $data);
 
         if ($this->config['api_debug'] ?? false) {
-            \Log::channel('single')->debug(
+            Log::channel('single')->debug(
                 sprintf("TELEGRAM-LOGGER API RESPONSE: [%d]\n%s", $response->status(), json_encode($response->json(), 128))
             );
         }

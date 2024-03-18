@@ -2,6 +2,7 @@
 
 namespace Emotality\Telegram;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
 
 class TelegramLoggerServiceProvider extends ServiceProvider
@@ -30,7 +31,7 @@ class TelegramLoggerServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->publishes([
-                __DIR__.'/../config/telegram-logger.php' => config_path('telegram-logger.php'),
+                __DIR__.'/../config/telegram-logger.php' => App::configPath('telegram-logger.php'),
             ], 'config');
         }
     }
