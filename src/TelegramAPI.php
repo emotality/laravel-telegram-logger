@@ -3,24 +3,20 @@
 namespace Emotality\Telegram;
 
 use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class TelegramAPI
 {
-    /** @var \Illuminate\Http\Client\PendingRequest */
-    protected PendingRequest $client;
+    private PendingRequest $client;
 
-    /** @var string */
     private string $base_url;
 
-    /**
-     * @var array
-     */
-    public array $config = [
-        'chat_id'   => 'your_chat_id',
-        'api_key'   => 'your_api_key',
+    private array $config = [
+        'chat_id'   => null,
+        'api_key'   => null,
         'api_url'   => 'https://api.telegram.org/bot',
         'api_debug' => false,
     ];
@@ -29,18 +25,17 @@ class TelegramAPI
      * TelegramAPI constructor.
      *
      * @return void
-     * @throws \Emotality\Telegram\TelegramLoggerException
      */
     public function __construct()
     {
-        $this->config = Config::get('telegram-logger') ?? $this->config;
+        $this->config = Config::get('telegram-logger', $this->config);
 
         $this->base_url = $this->config['api_url'].$this->config['api_key'];
 
         $this->client = Http::baseUrl($this->base_url)->withOptions([
             'debug'           => $this->config['api_debug'],
-            //'verify'          => true,
-            //'version'         => 2.0,
+            'verify'          => true,
+            'version'         => 2.0,
             'connect_timeout' => 15,
             'timeout'         => 30,
         ])->acceptJson();
@@ -49,9 +44,8 @@ class TelegramAPI
     /**
      * Handle API request to send message.
      *
-     * @param  string  $message
-     * @return bool
      * @see https://core.telegram.org/bots/api#sendmessage
+     * @throws \Emotality\Telegram\TelegramLoggerException
      */
     public function sendMessage(string $message): bool
     {
@@ -67,7 +61,8 @@ class TelegramAPI
             );
         }
 
-        $response = $this->client->post('/sendMessage', $data);
+        $response = $this->client->post('/sendMessage', $data)
+            ->onError(fn (Response $response) => throw new TelegramLoggerException($response));
 
         if ($this->config['api_debug'] ?? false) {
             Log::channel('single')->debug(

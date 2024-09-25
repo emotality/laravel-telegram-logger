@@ -9,20 +9,12 @@ use Monolog\LogRecord;
 
 class TelegramLogHandler extends AbstractProcessingHandler
 {
-    /** @var string */
     private string $app_name;
 
-    /** @var string */
     private string $app_env;
 
-    /** @var int|false */
     private int|false $cache_ttl;
 
-    /**
-     * @param  array  $app_config
-     * @param  int|false  $cache_ttl
-     * @param  int|string|\Monolog\Level  $level
-     */
     public function __construct(array $app_config, int|false $cache_ttl, int|string|Level $level = Level::Debug)
     {
         $this->app_name = $app_config['name'];
@@ -59,9 +51,6 @@ class TelegramLogHandler extends AbstractProcessingHandler
 
     /**
      * Send log to Telegram.
-     *
-     * @param  \Monolog\LogRecord  $record
-     * @return void
      */
     protected function write(LogRecord $record): void
     {
@@ -71,8 +60,7 @@ class TelegramLogHandler extends AbstractProcessingHandler
     }
 
     /**
-     * @param  \Monolog\LogRecord  $record
-     * @return string
+     * Format the message that will be sent.
      */
     protected function formatMessage(LogRecord $record): string
     {

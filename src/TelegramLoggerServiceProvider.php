@@ -14,7 +14,8 @@ class TelegramLoggerServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton(TelegramAPI::class, fn () => new TelegramAPI());
+        $this->app->singleton(TelegramAPI::class, fn () => new TelegramAPI);
+
         $this->app['log']->extend('telegram', function ($app, array $config) {
             return new \Monolog\Logger('telegram-logger', [
                 new TelegramLogHandler($app['config']['app'], $config['cache_ttl'], $config['level']),

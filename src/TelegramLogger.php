@@ -19,8 +19,6 @@ class TelegramLogger
     /**
      * Send a message to a chat.
      *
-     * @param  string  $message
-     * @return bool
      * @throws \Emotality\Telegram\TelegramLoggerException
      */
     public static function sendMessage(string $message): bool

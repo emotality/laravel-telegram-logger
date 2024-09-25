@@ -2,15 +2,18 @@
 
 namespace Emotality\Telegram;
 
+use Illuminate\Http\Client\Response;
+
 class TelegramLoggerException extends \Exception
 {
-    /**
-     * @param  string  $message
-     * @param  int  $code
-     * @param  \Throwable|null  $previous
-     */
-    public function __construct(string $message, int $code = 1337, \Throwable $previous = null)
+    public function __construct(Response $response)
     {
-        parent::__construct($message, $code, $previous);
+        $e = $response->toException();
+
+        parent::__construct(
+            message: $e?->getMessage() ?? 'Failed to log to Telegram.',
+            code: $response->getStatusCode(),
+            previous: $e
+        );
     }
 }
