@@ -54,7 +54,7 @@ class TelegramLogHandler extends AbstractProcessingHandler
             Cache::put($cache_key, get_class($e), $this->cache_ttl);
         }
 
-        return true;
+        return parent::isHandling($record);
     }
 
     /**
