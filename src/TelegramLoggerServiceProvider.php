@@ -18,7 +18,7 @@ class TelegramLoggerServiceProvider extends ServiceProvider
 
         $this->app['log']->extend('telegram', function ($app, array $config) {
             return new \Monolog\Logger('telegram-logger', [
-                new TelegramLogHandler($app['config']['app'], $config['cache_ttl'], $config['level']),
+                new TelegramLogHandler($config['cache_ttl'], $config['level']),
             ]);
         });
     }

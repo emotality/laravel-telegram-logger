@@ -26,6 +26,7 @@ Laravel package to report exceptions to a Telegram chat, group or channel.
 3. Add the following lines to your `.env`:
 
 ```dotenv
+TELEGRAM_APP_NAME="A non-APP_NAME name" // optional
 TELEGRAM_API_KEY="<telegram_api_key>"
 TELEGRAM_CHAT_ID="<telegram_chat_id>"
 ```
@@ -37,7 +38,7 @@ TELEGRAM_CHAT_ID="<telegram_chat_id>"
     ...
     'telegram' => [
         'driver' => 'telegram',
-        'level' => 'error',
+        'level' => env('LOG_LEVEL', 'error'),
         'cache_ttl' => env('TELEGRAM_CACHE_TTL', 300),
     ],
 ],

@@ -3,6 +3,12 @@
 return [
 
     /*
+     * The application name that should be displayed in the Telegram message.
+     * This is optional but useful if you have multiple apps with the same name.
+     */
+    'app_name' => env('TELEGRAM_APP_NAME', env('APP_NAME')),
+
+    /*
      * Chat ID that will be receiving the messages.
      * See: https://stackoverflow.com/a/32572159
      */

@@ -2,8 +2,10 @@
 
 namespace Emotality\Telegram;
 
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +17,7 @@ class TelegramAPI
     private string $base_url;
 
     private array $config = [
+        'app_name'  => null,
         'chat_id'   => null,
         'api_key'   => null,
         'api_url'   => 'https://api.telegram.org/bot',
@@ -61,8 +64,9 @@ class TelegramAPI
             );
         }
 
-        $response = $this->client->post('/sendMessage', $data)
-            ->onError(fn (Response $response) => throw new TelegramLoggerException($response));
+        $response = $this->client->post('/sendMessage', $data)->onError(
+            fn (Response $response) => App::get(ExceptionHandler::class)->report(new TelegramLoggerException($response))
+        );
 
         if ($this->config['api_debug'] ?? false) {
             Log::channel('single')->debug(

@@ -3,6 +3,7 @@
 namespace Emotality\Telegram;
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Level;
 use Monolog\LogRecord;
@@ -15,10 +16,10 @@ class TelegramLogHandler extends AbstractProcessingHandler
 
     private int|false $cache_ttl;
 
-    public function __construct(array $app_config, int|false $cache_ttl, int|string|Level $level = Level::Debug)
+    public function __construct(int|false $cache_ttl, int|string|Level $level = Level::Debug)
     {
-        $this->app_name = $app_config['name'];
-        $this->app_env = ucfirst($app_config['env']);
+        $this->app_name = Config::get('telegram-logger.app_name', Config::get('app.name'));
+        $this->app_env = ucfirst(Config::get('app.env'));
         $this->cache_ttl = $cache_ttl;
 
         parent::__construct($level);
@@ -69,7 +70,7 @@ class TelegramLogHandler extends AbstractProcessingHandler
         $formatted .= '<b>Log Level:</b> '.$record->level->name.PHP_EOL;
         $formatted .= '<b>Date:</b> '.$record->datetime->format('Y-m-d H:i:s').PHP_EOL;
 
-        $message = PHP_EOL.sprintf('<pre><code class="language-text">%s</code></pre>', $record->message);
+        $message = PHP_EOL.sprintf('<pre><code class="language-text">%s</code></pre>', strip_tags($record->message));
 
         if ((strlen($formatted) + strlen($message)) > 4000) {
             $message = substr($record->message, 0, (4000 - strlen($formatted)));
