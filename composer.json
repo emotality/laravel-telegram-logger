@@ -27,18 +27,33 @@
         "monolog/monolog": "^3.0"
     },
     "require-dev": {
-        "laravel/pint": "^1.20"
+        "laravel/pint": "^1.15",
+        "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+        "pestphp/pest": "^2.36|^3.0|^4.0"
     },
     "autoload": {
         "psr-4": {
             "Emotality\\Telegram\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Emotality\\Telegram\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "Emotality\\Telegram\\TelegramLoggerServiceProvider"
             ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "dev",
