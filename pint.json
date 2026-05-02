@@ -35,10 +35,5 @@
             ]
         },
         "single_line_comment_spacing": false
-    },
-    "exclude": [
-        "repositories",
-        "resources",
-        "routes"
-    ]
+    }
 }
