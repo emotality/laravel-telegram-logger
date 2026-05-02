@@ -16,8 +16,8 @@ Laravel package to report exceptions to a Telegram chat, group or channel.
 
 ## Requirements
 
-- PHP 8.1+
-- Laravel 10
+- PHP 8.1+ (including PHP 8.5)
+- Laravel 10, 11, 12, and 13
 
 ## Installation
 
